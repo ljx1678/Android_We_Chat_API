@@ -26,209 +26,209 @@ import com.tencent.mm.sdk.openapi.GetMessageFromWX;
 
 public class GetFromWXActivity extends Activity {
 
-	private static final int THUMB_SIZE = 150;
+    private static final int THUMB_SIZE = 150;
 
-	private IWXAPI api;
-	private Bundle bundle;
+    private IWXAPI api;
+    private Bundle bundle;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		// acquire wxapi
-		api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
-		bundle = getIntent().getExtras();
+        // acquire wxapi
+        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
+        bundle = getIntent().getExtras();
 
-		setContentView(R.layout.get_from_wx);
-		initView();
-	}
+        setContentView(R.layout.get_from_wx);
+        initView();
+    }
 
-	@Override
-	public void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		bundle = intent.getExtras();
-	}
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        bundle = intent.getExtras();
+    }
 
-	private void initView() {
+    private void initView() {
 
-		findViewById(R.id.get_text).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.get_text).setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				final EditText editor = new EditText(GetFromWXActivity.this);
-				editor.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-				editor.setText(R.string.share_text_default);
-				MMAlert.showAlert(GetFromWXActivity.this, "share text", editor, getString(R.string.app_share), getString(R.string.app_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText editor = new EditText(GetFromWXActivity.this);
+                editor.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                editor.setText(R.string.share_text_default);
+                MMAlert.showAlert(GetFromWXActivity.this, "share text", editor, getString(R.string.app_share), getString(R.string.app_cancel), new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String text = editor.getText().toString();
-						if (text == null || text.length() == 0) {
-							return;
-						}
-						
-						// ³õÊ¼»¯Ò»¸öWXTextObject¶ÔÏó
-						WXTextObject textObj = new WXTextObject();
-						textObj.text = text;
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String text = editor.getText().toString();
+                        if (text == null || text.length() == 0) {
+                            return;
+                        }
 
-						// ÓÃWXTextObject¶ÔÏó³õÊ¼»¯Ò»¸öWXMediaMessage¶ÔÏó
-						WXMediaMessage msg = new WXMediaMessage(textObj);
-						msg.description = text;
-						
-						// ¹¹ÔìÒ»¸öResp
-						GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-						// ½«reqµÄtransactionÉèÖÃµ½resp¶ÔÏóÖĞ£¬ÆäÖĞbundleÎªÎ¢ĞÅ´«µİ¹ıÀ´µÄintentËù´øµÄÄÚÈİ£¬Í¨¹ıgetExtras·½·¨»ñÈ¡
-						resp.transaction = getTransaction();
-						resp.message = msg;
-						
-						// µ÷ÓÃapi½Ó¿ÚÏìÓ¦Êı¾İµ½Î¢ĞÅ
-						api.sendResp(resp);
-						finish();
-					}
-				}, null);
-			}
-		});
+                        // åˆå§‹åŒ–ä¸€ä¸ªWXTextObjectå¯¹è±¡
+                        WXTextObject textObj = new WXTextObject();
+                        textObj.text = text;
 
-		findViewById(R.id.get_img).setOnClickListener(new View.OnClickListener() {
+                        // ç”¨WXTextObjectå¯¹è±¡åˆå§‹åŒ–ä¸€ä¸ªWXMediaMessageå¯¹è±¡
+                        WXMediaMessage msg = new WXMediaMessage(textObj);
+                        msg.description = text;
 
-			@Override
-			public void onClick(View v) {
-				// respond with image message
-				Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.send_img);
-				WXImageObject imgObj = new WXImageObject(bmp);
+                        // æ„é€ ä¸€ä¸ªResp
+                        GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+                        // å°†reqçš„transactionè®¾ç½®åˆ°respå¯¹è±¡ä¸­ï¼Œå…¶ä¸­bundleä¸ºå¾®ä¿¡ä¼ é€’è¿‡æ¥çš„intentæ‰€å¸¦çš„å†…å®¹ï¼Œé€šè¿‡getExtrasæ–¹æ³•è·å–
+                        resp.transaction = getTransaction();
+                        resp.message = msg;
 
-				WXMediaMessage msg = new WXMediaMessage();
-				msg.mediaObject = imgObj;
+                        // è°ƒç”¨apiæ¥å£å“åº”æ•°æ®åˆ°å¾®ä¿¡
+                        api.sendResp(resp);
+                        finish();
+                    }
+                }, null);
+            }
+        });
 
-				// ÉèÖÃÏûÏ¢µÄËõÂÔÍ¼
-				Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
-				bmp.recycle();
-				msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
+        findViewById(R.id.get_img).setOnClickListener(new View.OnClickListener() {
 
-				GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-				resp.transaction = getTransaction();
-				resp.message = msg;
-				
-				api.sendResp(resp);
-				finish();
-			}
-		});
+            @Override
+            public void onClick(View v) {
+                // respond with image message
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.send_img);
+                WXImageObject imgObj = new WXImageObject(bmp);
 
-		findViewById(R.id.get_music).setOnClickListener(new View.OnClickListener() {
+                WXMediaMessage msg = new WXMediaMessage();
+                msg.mediaObject = imgObj;
 
-			@Override
-			public void onClick(View v) {
-				WXMusicObject music = new WXMusicObject();
-				music.musicUrl = "http://www.baidu.com";
+                // è®¾ç½®æ¶ˆæ¯çš„ç¼©ç•¥å›¾
+                Bitmap thumbBmp = Bitmap.createScaledBitmap(bmp, THUMB_SIZE, THUMB_SIZE, true);
+                bmp.recycle();
+                msg.thumbData = Util.bmpToByteArray(thumbBmp, true);
 
-				WXMediaMessage msg = new WXMediaMessage();
-				msg.mediaObject = music;
-				msg.title = "Music Title";
-				msg.description = "Music Album";
+                GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+                resp.transaction = getTransaction();
+                resp.message = msg;
 
-				Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.drawable.send_music_thumb);
-				msg.thumbData = Util.bmpToByteArray(thumb, true);
+                api.sendResp(resp);
+                finish();
+            }
+        });
 
-				GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-				resp.transaction = getTransaction();
-				resp.message = msg;
-				
-				api.sendResp(resp);
-				finish();
-			}
-		});
+        findViewById(R.id.get_music).setOnClickListener(new View.OnClickListener() {
 
-		findViewById(R.id.get_video).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WXMusicObject music = new WXMusicObject();
+                music.musicUrl = "http://www.baidu.com";
 
-			@Override
-			public void onClick(View v) {
-				WXVideoObject video = new WXVideoObject();
-				video.videoUrl = "http://www.baidu.com";
+                WXMediaMessage msg = new WXMediaMessage();
+                msg.mediaObject = music;
+                msg.title = "Music Title";
+                msg.description = "Music Album";
 
-				WXMediaMessage msg = new WXMediaMessage(video);
-				msg.title = "Video Title";
-				msg.description = "Video Description";
+                Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.drawable.send_music_thumb);
+                msg.thumbData = Util.bmpToByteArray(thumb, true);
 
-				GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-				resp.transaction = getTransaction();
-				resp.message = msg;
-				
-				api.sendResp(resp);
-				finish();
-			}
-		});
+                GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+                resp.transaction = getTransaction();
+                resp.message = msg;
 
-		findViewById(R.id.get_webpage).setOnClickListener(new View.OnClickListener() {
+                api.sendResp(resp);
+                finish();
+            }
+        });
 
-			@Override
-			public void onClick(View v) {
-				WXWebpageObject webpage = new WXWebpageObject();
-				webpage.webpageUrl = "http://www.baidu.com";
+        findViewById(R.id.get_video).setOnClickListener(new View.OnClickListener() {
 
-				WXMediaMessage msg = new WXMediaMessage(webpage);
-				msg.title = "WebPage Title";
-				msg.description = "WebPage Description";
+            @Override
+            public void onClick(View v) {
+                WXVideoObject video = new WXVideoObject();
+                video.videoUrl = "http://www.baidu.com";
 
-				GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-				resp.transaction = getTransaction();
-				resp.message = msg;
-				
-				api.sendResp(resp);
-				finish();
-			}
-		});
+                WXMediaMessage msg = new WXMediaMessage(video);
+                msg.title = "Video Title";
+                msg.description = "Video Description";
 
-		findViewById(R.id.get_appdata).setOnClickListener(new View.OnClickListener() {
+                GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+                resp.transaction = getTransaction();
+                resp.message = msg;
 
-			@Override
-			public void onClick(View v) {
-				// respond with appdata by taking photo
-				CameraUtil.takePhoto(GetFromWXActivity.this, "/mnt/sdcard/tencent/", "get_appdata", 0x100);
-			}
-		});
-	}
+                api.sendResp(resp);
+                finish();
+            }
+        });
+
+        findViewById(R.id.get_webpage).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                WXWebpageObject webpage = new WXWebpageObject();
+                webpage.webpageUrl = "http://www.baidu.com";
+
+                WXMediaMessage msg = new WXMediaMessage(webpage);
+                msg.title = "WebPage Title";
+                msg.description = "WebPage Description";
+
+                GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+                resp.transaction = getTransaction();
+                resp.message = msg;
+
+                api.sendResp(resp);
+                finish();
+            }
+        });
+
+        findViewById(R.id.get_appdata).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // respond with appdata by taking photo
+                CameraUtil.takePhoto(GetFromWXActivity.this, "/mnt/sdcard/tencent/", "get_appdata", 0x100);
+            }
+        });
+    }
 
 //	@Override
 //	protected int getLayoutId() {
 //		return R.layout.get_from_wx;
 //	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-		switch (requestCode) {
-		case 0x100: {
-			if (resultCode == RESULT_OK) {
-				final WXAppExtendObject appdata = new WXAppExtendObject();
-				final String path = CameraUtil.getResultPhotoPath(this, data, "/mnt/sdcard/tencent/");
-				appdata.filePath = path;
-				appdata.extInfo = "this is ext info";
-	
-				final WXMediaMessage msg = new WXMediaMessage();
-				msg.setThumbImage(Util.extractThumbNail(path, 150, 150, true));
-				msg.title = "this is title";
-				msg.description = "this is description";
-				msg.mediaObject = appdata;
-	
-				
-				GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-				resp.transaction = getTransaction();
-				resp.message = msg;
-				
-				api.sendResp(resp);
-				finish();
-			}
-			break;
-		}
+        switch (requestCode) {
+            case 0x100: {
+                if (resultCode == RESULT_OK) {
+                    final WXAppExtendObject appdata = new WXAppExtendObject();
+                    final String path = CameraUtil.getResultPhotoPath(this, data, "/mnt/sdcard/tencent/");
+                    appdata.filePath = path;
+                    appdata.extInfo = "this is ext info";
 
-		default:
-			break;
-		}
-	}
+                    final WXMediaMessage msg = new WXMediaMessage();
+                    msg.setThumbImage(Util.extractThumbNail(path, 150, 150, true));
+                    msg.title = "this is title";
+                    msg.description = "this is description";
+                    msg.mediaObject = appdata;
 
-	private String getTransaction() {
-		final GetMessageFromWX.Req req = new GetMessageFromWX.Req(bundle);
-		return req.transaction;
-	}
+
+                    GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+                    resp.transaction = getTransaction();
+                    resp.message = msg;
+
+                    api.sendResp(resp);
+                    finish();
+                }
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    private String getTransaction() {
+        final GetMessageFromWX.Req req = new GetMessageFromWX.Req(bundle);
+        return req.transaction;
+    }
 }
